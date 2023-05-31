@@ -1,10 +1,11 @@
 let yOffset = 0.0;
+
 let waveColor;
-let canvas;
+
 
 function setup() {
   const canvasContainer = document.getElementById('canvas-container')
-  createCanvas(500, 500);
+  const canvas = createCanvas(800, 800);
   waveColor = color(0, 100, 200, 50); // Light blue with transparency
   noFill();
 
@@ -14,17 +15,18 @@ function draw() {
   background(0, 30); // Fade the background slightly each frame
 
   const smallerSize = min(width, height);
-  const constraints = [smallerSize * 0.1, smallerSize * 0.9];
+  const constraints = [smallerSize * 0.05, smallerSize * 0.95];
 
   // Draw wave-like lines
   stroke(waveColor);
   strokeWeight(2);
+  
   for (let i = 0; i < 4; i++) {
-    const yOff = yOffset + i * 0.1;
     beginShape();
-    let xOffset = 0.0;
+    const yOff = yOffset + i * 0.1;
+    let xOffset = 0.00;
     const step = 20;
-
+    
     for (let x = constraints[0]; x < constraints[1] + step / 2; x += step) {
       const y = map(noise(xOffset, yOff), 0, 1, constraints[0], constraints[1]);
       vertex(x, y);
