@@ -1,88 +1,53 @@
+let yOffset = 0.0;
+let waveColor;
+let canvas;
 
-function generateGradientVectors(size) {
-  const vectors = [];
-  for (let i = 0; i < size; i++) {
-    const angle = Math.random() * 2 * Math.PI;
-    const x = Math.cos(angle);
-    const y = Math.sin(angle);
-    vectors.push([x, y]);
+function setup() {
+  const canvasContainer = document.getElementById('canvas-container')
+  createCanvas(500, 500);
+  waveColor = color(0, 100, 200, 50); // Light blue with transparency
+  noFill();
+
+}
+
+function draw() {
+  background(0, 30); // Fade the background slightly each frame
+
+  const smallerSize = min(width, height);
+  const constraints = [smallerSize * 0.1, smallerSize * 0.9];
+
+  // Draw wave-like lines
+  stroke(waveColor);
+  strokeWeight(2);
+  for (let i = 0; i < 4; i++) {
+    const yOff = yOffset + i * 0.1;
+    beginShape();
+    let xOffset = 0.0;
+    const step = 20;
+
+    for (let x = constraints[0]; x < constraints[1] + step / 2; x += step) {
+      const y = map(noise(xOffset, yOff), 0, 1, constraints[0], constraints[1]);
+      vertex(x, y);
+      xOffset += 0.05;
+    }
+
+    endShape();
   }
-  return vectors;
-}
 
-function dotProduct(gradient, dx, dy) {
-  return gradient[0] * dx + gradient[1] * dy;
-}
-
-function smooth(t) {
-  return t * t * (3 - 2 * t);
-}
-
-
-function perlinNoise(x, y, gradientVectors, gridSize) {
-  const cellX = Math.floor(x);
-  const cellY = Math.floor(y);
-
-  const topLeftGradient = gradientVectors[cellY % gridSize][cellX % gridSize];
-  const topRightGradient = gradientVectors[cellY % gridSize][(cellX + 1) % gridSize];
-  const bottomLeftGradient = gradientVectors[(cellY + 1) % gridSize][cellX % gridSize];
-  const bottomRightGradient = gradientVectors[(cellY + 1) % gridSize][(cellX + 1) % gridSize];
-
-  const dx = x - cellX;
-  const dy = y - cellY;
-
-  const topLeftDotProduct = dotProduct(topLeftGradient, dx, dy);
-  const topRightDotProduct = dotProduct(topRightGradient, dx - 1, dy);
-  const bottomLeftDotProduct = dotProduct(bottomLeftGradient, dx, dy - 1);
-  const bottomRightDotProduct = dotProduct(bottomRightGradient, dx - 1, dy - 1);
-
-  const smoothedDx = smooth(dx);
-  const smoothedDy = smooth(dy);
-
-  const topInterpolation = lerp(topLeftDotProduct, topRightDotProduct, smoothedDx);
-  const bottomInterpolation = lerp(bottomLeftDotProduct, bottomRightDotProduct, smoothedDx);
-  const finalInterpolation = lerp(topInterpolation, bottomInterpolation, smoothedDy);
-
-  return finalInterpolation;
-}
-
-
-function lerp(a, b, t) {
-  return a + t * (b - a);
-}
-
-const svg = document.getElementById('basesvg');
-
-const gridSize = 50; // Adjust this value to control the grid size
-const scale = 0.05; // Adjust this value to control the noise scale
-
-const width = 800; // SVG width
-const height = 600; // SVG height
-
-svg.setAttribute('width', width);
-svg.setAttribute('height', height);
-
-for (let x = 0; x < width; x += gridSize) {
-  for (let y = 0; y < height; y += gridSize) {
-    const finalInterpolation = perlinNoise(x * scale, y * scale);
-
-    // Determine the circle radius based on the noise value
-    const radius = Math.abs(finalInterpolation) * (gridSize / 2);
-
-    // Determine the circle color based on the noise value
-    const hue = Math.floor((finalInterpolation + 1) * 180);
-    const saturation = '100%';
-    const lightness = '50%';
-    const color = `hsl(${hue}, ${saturation}, ${lightness})`;
-
-    // Create a circle element and set its attributes
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('cx', x + (gridSize / 2));
-    circle.setAttribute('cy', y + (gridSize / 2));
-    circle.setAttribute('r', radius);
-    circle.setAttribute('fill', color);
-
-    // Append the circle to the SVG element
-    svg.appendChild(circle);
+  // Draw foam-like dots
+  stroke(255);
+  strokeWeight(1);
+  const foamCount = 1;
+  for (let i = 0; i < foamCount; i++) {
+    const x = random(constraints[0], constraints[1]);
+    const y = random(constraints[0], constraints[1]);
+    const foamSize = random(2, 6);
+    point(x, y, foamSize);
   }
+
+  yOffset += 0.005;
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
