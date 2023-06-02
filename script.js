@@ -52,7 +52,7 @@ function draw() {
 
   yOffset += 0.005;
 
-  // Check if it's time to change the number of wave lines
+  // 
   if (millis() - lastChangeTime >= changeInterval) {
     numWaveLines = Math.floor(random(1, 11)); // Randomly select a new number of wave lines
     lastChangeTime = millis(); // Update the time of the last change
