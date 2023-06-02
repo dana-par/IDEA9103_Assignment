@@ -1,14 +1,14 @@
 let yOffset = 0.0;
-
 let waveColor;
-
+let numWaveLines;
 
 function setup() {
-  const canvasContainer = document.getElementById('canvas-container')
-  const canvas = createCanvas(800, 800);
+  const canvasContainer = document.getElementById('canvas-container');
+  const canvas = createCanvas(800, 1200);
   waveColor = color(0, 100, 200, 50); // Light blue with transparency
   noFill();
-
+  
+  numWaveLines = Math.floor(random(1, 8)); // Randomly select the number of wave lines
 }
 
 function draw() {
@@ -20,13 +20,13 @@ function draw() {
   // Draw wave-like lines
   stroke(waveColor);
   strokeWeight(2);
-  
-  for (let i = 0; i < 4; i++) {
+
+  for (let i = 0; i < numWaveLines; i++) {
     beginShape();
     const yOff = yOffset + i * 0.1;
     let xOffset = 0.00;
     const step = 20;
-    
+
     for (let x = constraints[0]; x < constraints[1] + step / 2; x += step) {
       const y = map(noise(xOffset, yOff), 0, 1, constraints[0], constraints[1]);
       vertex(x, y);
@@ -38,7 +38,7 @@ function draw() {
 
   // Draw foam-like dots
   stroke(255);
-  strokeWeight(1);
+  strokeWeight(5);
   const foamCount = 1;
   for (let i = 0; i < foamCount; i++) {
     const x = random(constraints[0], constraints[1]);
