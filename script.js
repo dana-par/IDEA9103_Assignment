@@ -41,7 +41,7 @@ function draw() {
 
   // Draw foam-like dots
   stroke(255);
-  strokeWeight(1);
+  strokeWeight(2);
   const foamCount = 1;
   for (let i = 0; i < foamCount; i++) {
     const x = random(constraints[0], constraints[1]);
